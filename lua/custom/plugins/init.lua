@@ -46,19 +46,6 @@ return {
     end,
   },
 
-  -- Add material.nvim
-  --{
-  --  "marko-cerovac/material.nvim",
-  --  dependencies = { "nvim-lualine/lualine.nvim", "nvim-tree/nvim-web-devicons" },
-  --  config = function()
-  --  -- Set up material.nvim
-  --  require("material").setup({
-  --    lualine_style = "default", -- Choose 'default' or 'stealth'
-  --  })
-  --  vim.g.material_style = "deep ocean"
-  --  vim.cmd("colorscheme material") -- Activate the material colorscheme
-  --},
-
   -- Add bufferline.nvim
   {
     'akinsho/bufferline.nvim',
@@ -161,8 +148,63 @@ return {
       -- exclude_groups = {}, -- table: groups you don't want to clear
     })
     require('transparent').clear_prefix('NeoTree')
-    require('transparent').clear_prefix('lualine')
+    -- require('transparent').clear_prefix('lualine')
     require('transparent').clear_prefix('BufferLine')
     end,
   },
+
+  -- Add material.nvim
+  {
+    "marko-cerovac/material.nvim",
+    priority = 1000,
+    config = function()
+    vim.g.material_style = "deep ocean"
+
+    require('material').setup({
+      contrast = {
+        terminal = false,
+        sidebars = false,
+        floating_windows = false,
+        cursor_line = false,
+        non_current_windows = false,
+        filetypes = {},
+      },
+      styles = {
+        comments = { italic = true },
+        strings = { --[[ no style ]] },
+        keywords = { --[[ no style ]] },
+        functions = { --[[ no style ]] },
+        variables = { --[[ no style ]] },
+        operators = { --[[ no style ]] },
+        types = { --[[ no style ]] },
+      },
+      plugins = {
+        "gitsigns",
+        "mini",
+        "neo-tree",
+        "nvim-cmp",
+        "nvim-web-devicons",
+        "telescope",
+        "which-key",
+      },
+      disable = {
+        colored_cursor = false,
+        borders = false,
+        background = false,
+        term_colors = false,
+        eob_lines = false
+      },
+      high_visibility = {
+        lighter = false,
+        darker = false
+      },
+      lualine_style = "default",
+      async_loading = true,
+      custom_highlights = {},
+      custom_colors = {},
+    })
+
+    vim.cmd 'colorscheme material'
+    end
+  }
 }
