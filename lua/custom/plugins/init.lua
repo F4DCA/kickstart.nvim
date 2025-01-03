@@ -141,7 +141,7 @@ return {
         "NvimTreeNormal", -- NvimTree
         "FloatBorder", -- Border of floating windows
         "Pmenu",      -- Popup menu
-        "PmenuSel",   -- Selected item in popup menu
+        -- "PmenuSel",   -- Selected item in popup menu
         "PmenuSbar",  -- Popup menu scrollbar
         "PmenuThumb" -- Popup menu scrollbar thumb
       },
