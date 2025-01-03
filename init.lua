@@ -8,12 +8,17 @@ vim.g.maplocalleader = ' '
 vim.cmd([[cd /mnt/veracrypt1/Documents/Synced/Projects/]])
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
+
+-- Default indentation settings (4 spaces)
+vim.opt.tabstop = 4        -- Width of tab character
+vim.opt.softtabstop = 4    -- Fine-tunes amount of whitespace
+vim.opt.shiftwidth = 4     -- Amount of whitespace to add/remove using indentation commands
 
 -- Make line numbers default
 vim.opt.number = true
