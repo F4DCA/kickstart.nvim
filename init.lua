@@ -4,8 +4,8 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Set the default working directory to /sdcard/Documents/Synced/Projects
-vim.cmd([[cd /mnt/veracrypt1/Documents/Synced/Projects/]])
+-- Set the default working directory to $PROJECTSDIR
+vim.cmd([[cd $PROJECTSDIR]])
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
