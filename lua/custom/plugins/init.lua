@@ -21,23 +21,38 @@ return {
         c = function(...)
         local c_base = {
           "cd $dir &&",
-          "clang $fileName -o",
-          "/tmp/$fileNameWithoutExt",
+          "gcc $fileName -o /tmp/$fileNameWithoutExt",
         }
         local c_exec = {
-          "&& /tmp/$fileNameWithoutExt &&",
-          "rm /tmp/$fileNameWithoutExt",
+          "&& /tmp/$fileNameWithoutExt",
+          "; rm -f /tmp/$fileNameWithoutExt"
         }
         vim.ui.input({ prompt = "Add more args:" }, function(input)
-        c_base[4] = input
-        require("code_runner.commands").run_from_fn(vim.list_extend(c_base, c_exec))
-        end)
+        if input and input ~= "" then
+          table.insert(c_base, input)
+          end
+          require("code_runner.commands").run_from_fn(vim.list_extend(c_base, c_exec))
+          end)
+        end,
+        cpp = function(...)
+        local cpp_base = {
+          "cd $dir &&",
+          "g++ $fileName -o /tmp/$fileNameWithoutExt",
+        }
+        local cpp_exec = {
+          "&& /tmp/$fileNameWithoutExt",
+          "; rm -f /tmp/$fileNameWithoutExt"
+        }
+        vim.ui.input({ prompt = "Add more args:" }, function(input)
+        if input and input ~= "" then
+          table.insert(cpp_base, input)
+          end
+          require("code_runner.commands").run_from_fn(vim.list_extend(cpp_base, cpp_exec))
+          end)
         end,
         tex = "pdflatex $fileName"
       },
     })
-
-    -- Keybindings for code_runner
     vim.keymap.set("n", "<leader>R", ":RunCode<CR>", { noremap = true, silent = false })
     vim.keymap.set("n", "<leader>Rf", ":RunFile<CR>", { noremap = true, silent = false })
     vim.keymap.set("n", "<leader>Rft", ":RunFile tab<CR>", { noremap = true, silent = false })
