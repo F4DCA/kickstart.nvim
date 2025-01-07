@@ -18,38 +18,18 @@ return {
           "rustc $fileName &&",
           "$dir/$fileNameWithoutExt"
         },
-        c = function(...)
-        local c_base = {
+        c = {
           "cd $dir &&",
-          "gcc $fileName -o /tmp/$fileNameWithoutExt",
-        }
-        local c_exec = {
-          "&& /tmp/$fileNameWithoutExt",
+          "gcc $fileName -o /tmp/$fileNameWithoutExt &&",
+          "/tmp/$fileNameWithoutExt",
           "; rm -f /tmp/$fileNameWithoutExt"
-        }
-        vim.ui.input({ prompt = "Add more args:" }, function(input)
-        if input and input ~= "" then
-          table.insert(c_base, input)
-          end
-          require("code_runner.commands").run_from_fn(vim.list_extend(c_base, c_exec))
-          end)
-        end,
-        cpp = function(...)
-        local cpp_base = {
+        },
+        cpp = {
           "cd $dir &&",
-          "g++ $fileName -o /tmp/$fileNameWithoutExt",
-        }
-        local cpp_exec = {
-          "&& /tmp/$fileNameWithoutExt",
+          "g++ $fileName -o /tmp/$fileNameWithoutExt &&",
+          "/tmp/$fileNameWithoutExt",
           "; rm -f /tmp/$fileNameWithoutExt"
-        }
-        vim.ui.input({ prompt = "Add more args:" }, function(input)
-        if input and input ~= "" then
-          table.insert(cpp_base, input)
-          end
-          require("code_runner.commands").run_from_fn(vim.list_extend(cpp_base, cpp_exec))
-          end)
-        end,
+        },
         tex = "pdflatex $fileName"
       },
     })
@@ -58,6 +38,27 @@ return {
     vim.keymap.set("n", "<leader>Rft", ":RunFile tab<CR>", { desc = '[R]un [f]ile [t]ab', noremap = true, silent = false })
     vim.keymap.set("n", "<leader>Rp", ":RunProject<CR>", { desc = '[R]un [p]roject', noremap = true, silent = false })
     vim.keymap.set("n", "<leader>Rc", ":RunClose<CR>", { desc = '[R]un [c]lose', noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Ra", function()
+    local filetype = vim.bo.filetype
+    if filetype == "c" or filetype == "cpp" then
+      local base_cmd = {
+        "cd $dir &&",
+        (filetype == "c" and "gcc" or "g++") .. " $fileName -o /tmp/$fileNameWithoutExt",
+      }
+      local exec_cmd = {
+        "&& /tmp/$fileNameWithoutExt",
+        "; rm -f /tmp/$fileNameWithoutExt",
+      }
+      vim.ui.input({ prompt = "Add more args:" }, function(input)
+      if input and input ~= "" then
+        table.insert(base_cmd, input)
+        end
+        require("code_runner.commands").run_from_fn(vim.list_extend(base_cmd, exec_cmd))
+        end)
+      else
+        print("Current filetype does not support additional arguments.")
+        end
+        end, { desc = "[R]un with [a]rgs", noremap = true, silent = false })
     end,
   },
 
