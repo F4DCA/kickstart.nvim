@@ -53,11 +53,11 @@ return {
         tex = "pdflatex $fileName"
       },
     })
-    vim.keymap.set("n", "<leader>R", ":Run Code <CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rf", ":Run File <CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rft", ":Run File tab <CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rp", ":Run Project <CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rc", ":Run Close <CR>", { noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>R", ":RunCode<CR>", { noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rf", ":RunFile<CR>", { noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rft", ":RunFile tab<CR>", { noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rp", ":RunProject<CR>", { noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rc", ":RunClose<CR>", { noremap = true, silent = false })
     end,
   },
 
