@@ -18,31 +18,47 @@ return {
           "rustc $fileName &&",
           "$dir/$fileNameWithoutExt"
         },
-        c = function(...)
-        local c_base = {
+        c = {
           "cd $dir &&",
-          "clang $fileName -o",
+          "gcc $fileName -o /tmp/$fileNameWithoutExt &&",
           "/tmp/$fileNameWithoutExt",
-        }
-        local c_exec = {
-          "&& /tmp/$fileNameWithoutExt &&",
-          "rm /tmp/$fileNameWithoutExt",
-        }
-        vim.ui.input({ prompt = "Add more args:" }, function(input)
-        c_base[4] = input
-        require("code_runner.commands").run_from_fn(vim.list_extend(c_base, c_exec))
-        end)
-        end,
+          "; rm -f /tmp/$fileNameWithoutExt"
+        },
+        cpp = {
+          "cd $dir &&",
+          "g++ $fileName -o /tmp/$fileNameWithoutExt &&",
+          "/tmp/$fileNameWithoutExt",
+          "; rm -f /tmp/$fileNameWithoutExt"
+        },
         tex = "pdflatex $fileName"
       },
     })
-
-    -- Keybindings for code_runner
-    vim.keymap.set("n", "<leader>R", ":RunCode<CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rf", ":RunFile<CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rft", ":RunFile tab<CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rp", ":RunProject<CR>", { noremap = true, silent = false })
-    vim.keymap.set("n", "<leader>Rc", ":RunClose<CR>", { noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>R", ":RunCode<CR>", { desc = '[R]un Code', noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rf", ":RunFile<CR>", { desc = '[R]un [f]ile', noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rft", ":RunFile tab<CR>", { desc = '[R]un [f]ile [t]ab', noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rp", ":RunProject<CR>", { desc = '[R]un [p]roject', noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Rc", ":RunClose<CR>", { desc = '[R]un [c]lose', noremap = true, silent = false })
+    vim.keymap.set("n", "<leader>Ra", function()
+    local filetype = vim.bo.filetype
+    if filetype == "c" or filetype == "cpp" then
+      local base_cmd = {
+        "cd $dir &&",
+        (filetype == "c" and "gcc" or "g++") .. " $fileName -o /tmp/$fileNameWithoutExt",
+      }
+      local exec_cmd = {
+        "&& /tmp/$fileNameWithoutExt",
+        "; rm -f /tmp/$fileNameWithoutExt",
+      }
+      vim.ui.input({ prompt = "Add more args:" }, function(input)
+      if input and input ~= "" then
+        table.insert(base_cmd, input)
+        end
+        require("code_runner.commands").run_from_fn(vim.list_extend(base_cmd, exec_cmd))
+        end)
+      else
+        print("Current filetype does not support additional arguments.")
+        end
+        end, { desc = "[R]un with [a]rgs", noremap = true, silent = false })
     end,
   },
 
@@ -206,5 +222,49 @@ return {
 
     vim.cmd 'colorscheme material'
     end
-  }
+  },
+
+  -- Install LuaSnip with friendly-snippets
+  {
+    "L3MON4D3/LuaSnip",
+    dependencies = {
+      "rafamadriz/friendly-snippets", -- friendly-snippets as dependency
+    },
+    config = function()
+      -- Set LuaSnip configuration options
+      require("luasnip").config.set_config({
+        enable_autosnippets = true,          -- Automatically trigger snippets where applicable
+        store_selection_keys = "<Tab>",      -- Use Tab to store your visual selection for a snippet
+      })
+
+      -- Load snippets from friendly-snippets (VSCode snippet format)
+      require("luasnip.loaders.from_vscode").lazy_load()
+
+      -- Optionally, if you have personal snippets stored in a custom directory:
+      -- require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/LuaSnip/" })
+
+      -- Key mappings for snippet expansion and navigation
+      -- These mappings use Vimscript inside a vim.cmd block for brevity.
+      vim.cmd([[
+        " Use Tab to either expand a snippet or jump to the next snippet placeholder
+        imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>'
+        smap <silent><expr> <Tab> luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<Tab>'
+
+        " Use Shift-Tab to jump backwards through snippet placeholders
+        imap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
+        smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
+      ]])
+    end,
+  },
+
+  -- Install VimTeX
+  {
+    "lervag/vimtex",
+    lazy = false,     -- we don't want to lazy load VimTeX
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+    -- VimTeX configuration goes here, e.g.
+    vim.g.vimtex_view_method = "zathura"
+    end
+  },
 }
